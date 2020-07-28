@@ -1,5 +1,6 @@
 
 
+
 function booksController(Book){
 function post(req,res){
     const book=new Book(req.body);
@@ -18,7 +19,14 @@ function get(req, res) {
     }
     Book.find(query, (err, books) => {
         if (err) { return res.send(err); }
-        res.json(books);
+     const returnBooks=books.map((book)=>{
+         let newBook=book.toJSON();
+        newBook.links={};
+        newBook.links.self=`http://${req.headers.host}/api/books/${book._id}`;
+        return newBook;
+        })
+     
+        return res.json(returnBooks);
     });
 }
 return {post,get};
